@@ -1,0 +1,12 @@
+node_modules/
+.npm-cache/
+.pnpm-store/
+.env.local
+tmp/
+output/
+.site-dist/
+dist/
+.sites-checkout/
+.sites-runtime/
+.openai/hosting.json
+

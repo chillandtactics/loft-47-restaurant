@@ -1,0 +1,16 @@
+{
+  "name": "loft-47-design-md-test",
+  "version": "0.2.0",
+  "private": true,
+  "description": "DESIGN.md-driven restaurant and event-venue template for the fictional LOFT 47 brand.",
+  "scripts": {
+    "design:lint": "node tools/designmd.mjs lint DESIGN.md",
+    "deploy:build": "node tools/build-static.mjs",
+    "check": "npm run design:lint && npm run deploy:build",
+    "serve": "python server.py"
+  },
+  "devDependencies": {
+    "@google/design.md": "0.4.0"
+  }
+}
+
