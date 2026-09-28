@@ -222,7 +222,7 @@ Formats are horizontal editorial rows rather than equal floating cards. Each row
 
 ### Gallery
 
-Gallery items are real raster photographs with meaningful alt text. Desktop keeps one dominant center image and side peeks; mobile preserves smaller side peeks instead of stacking the images. Navigation sits below the photographs rather than floating over them. Two visually explicit controls use the primary labels `Назад` and `Дальше`; the destination scene stays underneath as secondary context. Do not use arrow symbols or numeric pagination. Clicking a photograph opens a keyboard-accessible lightbox. Escape closes it and focus returns to the triggering image.
+Gallery items are real raster photographs with meaningful alt text. Desktop keeps one dominant center image and side peeks; mobile preserves smaller side peeks instead of stacking the images. Do not show previous/next buttons, arrow symbols or numeric pagination. A side photograph becomes current when clicked, horizontal swipes change the current photograph, and Left/Right work from a focused gallery item. Clicking the current photograph opens a keyboard-accessible lightbox. Escape closes it and focus returns to the triggering image. A compact live label below the rail names the current scene.
 
 ### Local booking modal
 

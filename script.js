@@ -11,12 +11,9 @@ const lightboxImage = document.querySelector("[data-lightbox-image]");
 const pageHeader = document.querySelector("[data-header]");
 const pageMain = document.querySelector("#main");
 const pageFooter = document.querySelector(".site-footer");
+const galleryStage = document.querySelector("[data-gallery]");
 const galleryCards = [...document.querySelectorAll("[data-gallery-card]")];
-const galleryPrevious = document.querySelector("[data-gallery-prev]");
-const galleryNext = document.querySelector("[data-gallery-next]");
 const galleryCurrentLabel = document.querySelector("[data-gallery-current-label]");
-const galleryPreviousLabel = document.querySelector("[data-gallery-prev-label]");
-const galleryNextLabel = document.querySelector("[data-gallery-next-label]");
 const menuTabs = [...document.querySelectorAll("[data-menu-tab]")];
 const menuPanels = [...document.querySelectorAll("[data-menu-panel]")];
 const desktopNavigation = window.matchMedia("(min-width: 901px)");
@@ -181,7 +178,7 @@ function closeLightbox() {
   returnFocus?.focus();
 }
 
-document.querySelectorAll("[data-lightbox-src]").forEach((button) => {
+document.querySelectorAll("[data-lightbox-src]:not([data-gallery-card])").forEach((button) => {
   button.addEventListener("click", () => openLightbox(button));
 });
 
@@ -195,32 +192,77 @@ function renderGallery() {
   const nextIndex = (currentGalleryIndex + 1) % total;
   galleryCards.forEach((card, index) => {
     card.classList.remove("is-prev", "is-current", "is-next");
-    if (index === currentGalleryIndex) card.classList.add("is-current");
+    const isCurrent = index === currentGalleryIndex;
+    if (isCurrent) card.classList.add("is-current");
     else if (index === previousIndex) card.classList.add("is-prev");
     else card.classList.add("is-next");
+
+    card.toggleAttribute("aria-current", isCurrent);
+    card.setAttribute(
+      "aria-label",
+      isCurrent
+        ? `Открыть кадр: ${card.dataset.galleryLabel}`
+        : `Показать кадр: ${card.dataset.galleryLabel}`,
+    );
   });
 
   const currentLabel = galleryCards[currentGalleryIndex].dataset.galleryLabel;
-  const previousLabel = galleryCards[previousIndex].dataset.galleryLabel;
-  const nextLabel = galleryCards[nextIndex].dataset.galleryLabel;
   galleryCurrentLabel.textContent = currentLabel;
-  galleryPreviousLabel.textContent = previousLabel;
-  galleryNextLabel.textContent = nextLabel;
-  galleryPrevious.setAttribute("aria-label", `Назад. Открыть кадр: ${previousLabel}`);
-  galleryNext.setAttribute("aria-label", `Дальше. Открыть кадр: ${nextLabel}`);
 }
 
+function moveGallery(direction, moveFocus = false) {
+  currentGalleryIndex = (currentGalleryIndex + direction + galleryCards.length) % galleryCards.length;
+  renderGallery();
+  if (moveFocus) galleryCards[currentGalleryIndex].focus();
+}
+
+let galleryPointerStartX = null;
+let gallerySwiped = false;
+
+galleryCards.forEach((card, index) => {
+  card.addEventListener("click", (event) => {
+    if (gallerySwiped) {
+      event.preventDefault();
+      return;
+    }
+
+    if (index === currentGalleryIndex) openLightbox(card);
+    else {
+      currentGalleryIndex = index;
+      renderGallery();
+      card.focus();
+    }
+  });
+
+  card.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    moveGallery(event.key === "ArrowLeft" ? -1 : 1, true);
+  });
+});
+
+galleryStage.addEventListener("pointerdown", (event) => {
+  galleryPointerStartX = event.clientX;
+});
+
+galleryStage.addEventListener("pointerup", (event) => {
+  if (galleryPointerStartX === null) return;
+  const distance = event.clientX - galleryPointerStartX;
+  galleryPointerStartX = null;
+  if (Math.abs(distance) < 48) return;
+
+  gallerySwiped = true;
+  moveGallery(distance > 0 ? -1 : 1);
+  window.setTimeout(() => {
+    gallerySwiped = false;
+  }, 0);
+});
+
+galleryStage.addEventListener("pointercancel", () => {
+  galleryPointerStartX = null;
+});
+
 renderGallery();
-
-galleryPrevious.addEventListener("click", () => {
-  currentGalleryIndex = (currentGalleryIndex - 1 + galleryCards.length) % galleryCards.length;
-  renderGallery();
-});
-
-galleryNext.addEventListener("click", () => {
-  currentGalleryIndex = (currentGalleryIndex + 1) % galleryCards.length;
-  renderGallery();
-});
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {

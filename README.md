@@ -42,14 +42,10 @@ The static build is written to `dist/`. The official `@google/design.md@0.4.0` C
 
 The default form performs browser validation only. It does not create a reservation or make a network request.
 
-## Repository packaging gate
+## Bundled media
 
-The source uses relative asset URLs and therefore supports a domain root or a GitHub Pages repository subpath. Before creating the GitHub repository, place the approved binaries at:
+The repository includes six original generated venue images and the self-hosted Manrope and Unbounded variable fonts. Font license texts are stored next to the binaries in `assets/fonts/`. A fresh clone does not depend on the local Codex image or font cache.
 
-- `assets/images/loft-47-hero.png`
-- `assets/fonts/Unbounded-Variable.ttf`
-- `assets/fonts/Manrope-Variable.ttf`
-
-The current local builder can temporarily fall back to the original generated-image and font cache on this computer. A fresh clone must not rely on those fallback paths. Add font license files when the binaries are committed.
+All source files use relative asset URLs, so the site works from a domain root or a GitHub Pages repository subpath.
 
 `.openai/hosting.json` is machine/project-specific and ignored by Git. Use `.openai/hosting.example.json` only as a schema reference.
